@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Components/QuesPage/quesPage.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Components/QuesPage/quesPage.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import axios from "axios";
+import React, { useParams, useEffect, useState } from "react";
+import Answer from './answer_individual';
+import DispAnswer from './dispanswer';
+import "../Homepage/homepage.css"
+
+/**
+ * Rendering tags for a Question
+ * @name Display Tags For Selected Question
+ * @function rendertags
+ * @param {Array} tags - array of tags for a question 
+ * @returns {html} - returns html component for rendering tags
+ */
+
+function rendertags(tags) {
+  // if there are one or more tags then render on the question page
+  if (tags) {
+    return (
+      &lt;>
+        {tags.map(function (tag, i) {
+          return (&lt;span key={i} className="text-color tags tag-box">{tag}&lt;/span>)
+        })}
+      &lt;/>
+    )
+  }
+}
+
+/**
+ * Rendering question, likes and views feature for a Question
+ * @function QuestionPage
+ * @param {ObjectSchema} props - individual question 
+ * @returns {html} - returns html component for rendering question, likes and views
+ */
+
+function QuestionPage(props) {
+  // id: question id
+  const { id } = props.match.params
+  // create useState for storing question from the parameter.
+  const [question, setQuestion] = useState(false);
+  // like: number. create useState for storing count of likes
+  const [like, Setlike] = useState(0)
+  // Tags: number. create useState for storing tags of question
+  const [Tags, SetTags] = useState(0)
+
+  // Fetching question from backend by sending question id as parameter
+  /**
+   * Fetching question from backend by sending question id as parameter
+   * @function fetchQuestion
+   * @name fetchQuestion
+   * @returns {void}
+   */
+  async function fetchQuestion() {
+    // Fetching question document by invoking routing function
+    axios
+      .get("http://localhost:9000/ques/" + id)
+      .then((response) => {
+        setQuestion(response.data);
+        SetTags(response.data.tags);
+      });
+  }
+  // invoking upvote function from backend router
+  /**
+   * invoking upvote function from backend router
+   * @function OnLike
+   * @name OnLike
+   * @returns {void}
+   */
+  function OnLike() {
+    axios.get("http://localhost:9000/ques/upVote/" + id).then((response) => {
+      Setlike(response.data.upVoteCount)
+    }).catch((err) => { console.log(err) })
+  }
+
+  // Returning html component
+  useEffect(() => fetchQuestion(), [like]);
+  return (
+    &lt;div className="quest">
+      &lt;div className="row">
+        &lt;div className="col-1">
+          &lt;button onClick={OnLike}>&lt;i class="fa fa-thumbs-up">&lt;/i>&lt;/button>&lt;br />
+          &lt;span className="text-color view">Votes : {question.upVoteCount}&lt;/span>&lt;br />
+          &lt;span className="text-color view">views : {question.viewsCount}&lt;/span>
+        &lt;/div>
+        &lt;div className="col">
+          &lt;p className="text-color title">{question.body}&lt;/p>
+          &lt;div className="row quest-body">
+            &lt;div className="col-4">
+              &lt;span className="text-color postby">asked by {question.author}&lt;/span> &lt;span className="text-color postby">{question.created_at}&lt;/span>
+            &lt;/div>
+            &lt;div className="col-4">
+              {rendertags(question.tags)}
+            &lt;/div>
+            &lt;div className="col-2">
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+      &lt;hr class="my-4 mt-5" />
+      {/* calling display answers by sending question object as parameter */}
+      {&lt;DispAnswer question={question}>&lt;/DispAnswer>}
+      {/* calling post answer module by sending question object as parameter */}
+      {&lt;Answer question={question}>&lt;/Answer>}
+    &lt;/div>
+  )
+
+}
+
+export default QuestionPage;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Client</a></h2><h3>Modules</h3><ul><li><a href="global.html#Answer">Answer</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Authenticatorforfrontend">Authenticator for front end</a></li><li><a href="global.html#DispAnswer">DispAnswer</a></li><li><a href="global.html#ErrorMessage">ErrorMessage</a></li><li><a href="global.html#fetchQuestion">fetchQuestion</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#HomepageList">Homepage List</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NavigationBar">Navigation Bar</a></li><li><a href="global.html#OnLike">OnLike</a></li><li><a href="global.html#OnVote">OnVote</a></li><li><a href="global.html#PostQuestion">Post Question</a></li><li><a href="global.html#QuestionPage">QuestionPage</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#renderAns">renderAns</a></li><li><a href="global.html#rendertags">rendertags</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Oct 25 2021 19:48:37 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

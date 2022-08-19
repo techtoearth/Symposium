@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Components/Homepage/SearchPageList.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Components/Homepage/SearchPageList.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useContext, useState } from "react";
+import { Link } from 'react-router-dom';
+import './homepage.css'
+import AuthContext from "../../context/AuthContext";
+
+/**
+ * Rendering questions relevant with the search query
+ * @param {String} ques - search query 
+ * @returns {*} - returns html component for result of search
+ */
+function SearchPage({ ques }) {
+    const data = useContext(AuthContext);
+    const [search, setSearch] = useState("");
+    console.log("searching.......", search)
+    console.log(data)
+
+    // console.log("actve_client: ", loggedIn)
+
+    const loggedIn = data.loggedIn
+
+    const searchTo = {
+        pathname: "/search",
+        search: search
+    };
+
+    function rendertags(tags) {
+        if (tags) {
+            return (
+                &lt;>
+                    {tags.map(function (tag, i) {
+                        return (&lt;span key={i} className="text-color tags tag-box">{tag}&lt;/span>)
+                    })}
+                &lt;/>
+            )
+        }
+        else {
+            return (
+                &lt;>
+                &lt;/>
+            )
+        }
+    }
+
+
+    function renderQues() {
+        if (ques.length > 0) {
+            return ques.map((qp, i) => {
+                console.log("see this :", qp)
+                return (
+                    &lt;div className="row questions question-row">
+                        &lt;div className="col-8">
+                            &lt;div className="row row-color ml-1">
+                                {/* &lt;p key={i} >&lt;Link to={"/ques/" + qp._id} className="link"> {qp.body}&lt;/Link>&lt;/p> */}
+                                {loggedIn === true &amp;&amp; (
+                                    &lt;>
+                                        &lt;p key={i} className="title">&lt;Link to={"/ques/" + qp.ques._id} className="link"> {qp.ques.body}&lt;/Link>&lt;/p>
+                                    &lt;/>)
+                                }
+                                {loggedIn === undefined &amp;&amp; (
+                                    &lt;>
+                                        &lt;p key={i} >&lt;Link to={"/login"} className="link"> {qp.ques.body}&lt;/Link>&lt;/p>
+                                    &lt;/>)
+                                }
+                            &lt;/div>
+                            &lt;div className="row">
+                                &lt;div className="col-5 author">
+                                    &lt;p className="postby">  &lt;span>{qp.ques.author}&lt;/span>&lt;/p>
+                                &lt;/div>
+                                &lt;div className="col-7">
+                                    {rendertags(qp.ques.tags)}
+                                &lt;/div>
+                            &lt;/div>
+                        &lt;/div>
+                        &lt;div className="col-4">
+                            &lt;div className="row">
+                                &lt;div className="col-3 mt-3 mr-1 questions box s">
+                                    &lt;span className="text-color">{qp.ques.viewsCount}&lt;/span>&lt;br />
+                                    &lt;span className="text-color">Views&lt;/span>
+                                &lt;/div>
+                                &lt;div className="col-3 mt-3 mr-1 questions box s">
+                                    &lt;span className="text-color">{qp.ques.count_answers}&lt;/span>&lt;br />
+                                    &lt;p className="text-color">answers&lt;/p>
+                                &lt;/div>
+                                &lt;div className="col-3 mt-3  questions box s">
+                                    &lt;span className="text-color">{qp.ques.upVoteCount}&lt;/span>&lt;br />
+                                    &lt;span className="text-color">votes&lt;/span>
+                                &lt;/div>
+                            &lt;/div>
+                        &lt;/div>
+                    &lt;/div>
+                );
+            });
+        }
+        else {
+            return (
+                &lt;>
+                    &lt;p className="text-color box-result">No Result found :(&lt;/p>
+                &lt;/>
+            )
+        }
+        // console.log(ques)
+    }
+    return (
+        &lt;div>
+
+            {renderQues()}
+        &lt;/div>
+    );
+}
+
+export default SearchPage;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Client</a></h2><h3>Modules</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#DisplayAnswer">Display Answer</a></li><li><a href="global.html#DisplayTagsForSelectedQuestion">Display Tags For Selected Question</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NavigationBar">Navigation Bar</a></li><li><a href="global.html#PostAnswer">Post Answer</a></li><li><a href="global.html#PostQuestion">Post Question</a></li><li><a href="global.html#Ques">Ques</a></li><li><a href="global.html#QuestionPage">QuestionPage</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SearchPage">SearchPage</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Oct 25 2021 18:42:32 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

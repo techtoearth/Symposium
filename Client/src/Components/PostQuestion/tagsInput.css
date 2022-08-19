@@ -1,0 +1,49 @@
+
+  .tg{
+    display: flex;
+    margin-bottom: 1px;
+  }
+  
+  
+  .tag {
+    display: flex;
+    align-items: center;
+    margin-left: 1%;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 20%;
+    background-color: rgb(66, 64, 64);
+    white-space: nowrap;
+    color: white;
+  }
+  
+  .tag button {
+    display: flex;
+    padding: 6px;
+    border: none;
+    background-color: unset;
+    cursor: pointer;
+    color: white;
+  }
+
+.text-color{
+  color: white;
+}
+
+
+.textarea{
+  width: 65%;
+}
+
+.error{
+  color: red;
+}
+
+.post{
+  margin-top: 1%;
+  margin-left: 2%;
+}
+
+.input-tag{
+  width: 60%;
+}

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Components/QuesPage/dispanswer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Components/QuesPage/dispanswer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import axios from "axios";
+import React, { useContext,useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import AuthContext from "../../context/AuthContext";
+import "../Homepage/homepage.css"
+
+
+/**
+ * Displaying answers for a Question
+ * @name Display Answer
+ * @function DispAnswer
+ * @param {ObjectSchema} question - Question for which to display Answer 
+ * @returns {html} - Html component with displaying answers with like feature in a sorted order of likes
+ */
+
+function DispAnswer({ question }) {
+  // aId: String. stores answer ID. By default is empty string
+  const [aId , setaId] = useState("");
+  // qId: String. stores ID. By default is empty string
+  const [qId , setQId] = useState("");
+
+  /***
+    * Renders answers in sorted order of likes
+  */
+
+  /**
+ * Renders answers in sorted order of likes
+ * @name render Answer
+ * @function renderAns
+ */
+
+  function renderAns() {
+    if (question.count_answers === 0 || question === false) {
+      return(&lt;p>Error&lt;/p>)
+    }
+    
+    else {
+      // answer stores the array of answers(ObjectSchema) of that question
+      const answer=question.answers
+      // sort the answers in descending order of likes
+      const answers = answer.sort((a, b) => a.upVoteCount&lt;b.upVoteCount ? 1 : -1);
+      // for each answer returns separate html component
+      return question.answers.map((answer, j) => {
+      
+        return (
+          &lt;div className="container answer-box mt-5">
+            &lt;div className="row">
+              &lt;div className="col-1 mt-3">
+                &lt;button onClick={async()=>OnVote(answer._id)}>&lt;i class="fa fa-thumbs-up">&lt;/i>&lt;/button>&lt;br />
+              &lt;span className="text-color view">Votes :{answer.upVoteCount}&lt;/span>
+              &lt;/div>
+              &lt;div className="col">
+                &lt;div className="row ml-5 mt-1">
+                  &lt;p key={j} className="text-color answer_body"> {answer.body}&lt;/p>
+                &lt;/div>
+                &lt;div className="row ml-5 answered_by">
+                    &lt;p key={j + 1} className="text-color answer-author1">answered by &lt;span className="answer-author">{answer.author}&lt;/span> posted at &lt;span>{answer.created_at}&lt;/span>  &lt;/p>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        )
+      })
+    }
+   
+
+    /**
+ * likes feature added. One user can like only once
+ * @name Voting method
+ * @function OnVote
+ */
+    async function OnVote(answerId){
+      // Setting useState values
+      setQId(question._id)
+      setaId(answerId)
+      // data is a dictionary to be sent in backend
+
+      const data={qId:question._id,aId:answerId}
+      // Invoking routing function from backend
+      await axios.post("http://localhost:9000/ques/ans/upVote",data ).then((response)=>{
+      window.location.reload();
+  })
+ 
+    }
+  }
+
+  return (
+    &lt;div>
+      {renderAns()}
+    &lt;/div>
+  );
+
+}
+
+// Exporting module
+export default DispAnswer;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Client</a></h2><h3>Modules</h3><ul><li><a href="global.html#Answer">Answer</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Authenticatorforfrontend">Authenticator for front end</a></li><li><a href="global.html#DispAnswer">DispAnswer</a></li><li><a href="global.html#ErrorMessage">ErrorMessage</a></li><li><a href="global.html#fetchQuestion">fetchQuestion</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#HomepageList">Homepage List</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NavigationBar">Navigation Bar</a></li><li><a href="global.html#OnLike">OnLike</a></li><li><a href="global.html#OnVote">OnVote</a></li><li><a href="global.html#PostQuestion">Post Question</a></li><li><a href="global.html#QuestionPage">QuestionPage</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#renderAns">renderAns</a></li><li><a href="global.html#rendertags">rendertags</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Oct 25 2021 19:48:37 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Components/Navbar/navbar.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Components/Navbar/navbar.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useContext } from "react";
+import axios from "axios";
+import './navbar.css';
+import { useHistory, Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import AuthContext from "../../context/AuthContext";
+
+
+/**
+ * Creating navigation bar
+ * @function NavBar
+ * @name Navigation Bar
+ * @returns {html} - returns html component for navigation bars. navigation bar will be different fo logged out and logged in users
+ */
+
+export default function NavBar() {
+    const data = useContext(AuthContext);
+    const loggedIn = data.loggedIn
+    console.log("logged in", loggedIn)
+    const getLoggedIn = data.getLoggedIn
+    const history = useHistory();
+
+    /**
+     * On click of logout, direct to the homepage
+     * @returns {void} 
+     */
+
+    async function handleClick() {
+        await axios.get("http://localhost:9000/auth/logout");
+        await getLoggedIn();
+        history.push("/home");
+    }
+    // Returns the html component for navigation bar
+    return (
+        &lt;>
+         {/* Displays Website Name, Home and About page in the navigation bar  */}
+            &lt;nav className="navbar navbar-expand-lg navbar-light bg-dark">
+                &lt;a className="navbar-brand" href="#">&lt;span className="text-color Symposium">Symposium&lt;/span>&lt;/a>
+                &lt;button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    &lt;span className="navbar-toggler-icon">&lt;/span>
+                &lt;/button>
+
+                &lt;div className="collapse navbar-collapse" id="navbarSupportedContent">
+                    &lt;ul className="navbar-nav ms-auto">
+                        &lt;li className="nav-item active">
+                            &lt;Link className="nav-link" to="/home">&lt;span className="text-color"> Home &lt;/span>  &lt;span className="sr-only">(current)&lt;/span>&lt;/Link>
+                        &lt;/li>
+                        &lt;li className="nav-item">
+                            &lt;Link className="nav-link" to="/aboutus"> &lt;span className="text-color">About Us&lt;/span>  &lt;/Link>
+                        &lt;/li>
+
+                    &lt;/ul>
+                    
+                    &lt;ul className="navbar-nav me-auto">
+                        {/* If user is not logged in, it displays login, register page in the navigation bar */}
+                        {loggedIn === undefined &amp;&amp; (
+                            &lt;>
+                                &lt;li className="nav-item">
+                                    &lt;Link className="nav-link" to='/login'>&lt;span className="text-color">Login&lt;/span>&lt;/Link>
+                                &lt;/li>
+                                &lt;li className="nav-item">
+                                    &lt;Link className="nav-link" to='/register'>&lt;span className="text-color">Register&lt;/span>&lt;/Link>
+                                &lt;/li>
+                            &lt;/>)
+                        }
+                        {/* If user is logged in, it displays post question and logout(in drop down) in the navigation bar */}
+                        {loggedIn === true &amp;&amp; (
+                            &lt;>
+                                &lt;li className="nav-item">&lt;Link className="nav-link" to='/postQues'>&lt;span className="text-color">Post Your Ques&lt;/span>&lt;/Link>&lt;/li>
+                                &lt;div class="dropdown drop me-auto">
+                                    &lt;button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        &lt;i class="fas fa-caret-down" aria-hidden="true">&lt;/i>
+                                    &lt;/button>
+                                    &lt;div class="dropdown-menu dropdown" aria-labelledby="dropdownMenuButton">
+                                        {/* &lt;li className="nav-item">&lt;Link className="nav-link" to='/#'>&lt;span>Profile&lt;/span>&lt;/Link>&lt;/li> */}
+                                        &lt;li>&lt;Link className="nav-link" to="/home" onClick={handleClick} >&lt;span>Log Out&lt;/span>&lt;/Link>&lt;/li>
+                                    &lt;/div>
+                                &lt;/div>
+
+                            &lt;/>
+                        )
+                        }
+                    &lt;/ul>
+                &lt;/div>
+            &lt;/nav>
+        &lt;/>
+    );
+
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Client</a></h2><h3>Modules</h3><ul><li><a href="global.html#Answer">Answer</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Authenticatorforfrontend">Authenticator for front end</a></li><li><a href="global.html#DispAnswer">DispAnswer</a></li><li><a href="global.html#ErrorMessage">ErrorMessage</a></li><li><a href="global.html#fetchQuestion">fetchQuestion</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#HomepageList">Homepage List</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NavigationBar">Navigation Bar</a></li><li><a href="global.html#OnLike">OnLike</a></li><li><a href="global.html#OnVote">OnVote</a></li><li><a href="global.html#PostQuestion">Post Question</a></li><li><a href="global.html#QuestionPage">QuestionPage</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#renderAns">renderAns</a></li><li><a href="global.html#rendertags">rendertags</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Oct 25 2021 19:48:37 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

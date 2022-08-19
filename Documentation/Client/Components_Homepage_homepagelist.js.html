@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Components/Homepage/homepagelist.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Components/Homepage/homepagelist.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Homepage from "./homepage"
+
+/**
+ * list of all questions rendered by homepage.js displayed with the question details
+ * @function  Ques
+ * @name Homepage List
+ * @returns {html} html div component to render all things on the homepage
+ */
+
+function Ques() {
+  console.log("running")
+
+  /** ques: array variable , which we are using as a react hook (useState) ,in which we will store all the ques  */
+  const [ques, setQues] = useState([]);
+
+  /** addr: string variable , which we are using as a react hook (useState) , which contains the partial url address   */
+  const [addr, setAddr] = useState('/');
+    
+  /** tags: array variable , which we are using as a react hook (useState) , which contains an array of tags  */
+  const [tags, setTags] = useState([]);
+
+  /**
+   * setviewAddress : function
+   *   this function sets the value of addr (useState) from default to '/view/'
+   *   and then calls  getQues()
+   *   Need: when we want to sort the questions based on views then we click on the views button 
+   *         this function is then called 
+   */
+  function setviewAddress() {
+    console.log("hii")
+    setAddr('/view')
+    console.log(addr);
+    getQues();
+  }
+  
+  /**
+   * setvoteAddress : function
+   *   this function sets the value of addr (useState) from default to '/vote/'
+   *   and then calls  getQues()
+   *   Need: when we want to sort the questions based on vote then we click on the vote button 
+   *         this function is then called 
+   */
+  function setvoteAddress() {
+    console.log("hii")
+    setAddr('/vote')
+    console.log(addr);
+    getQues();
+  }
+
+  /**
+   * setanswerAddress : function
+   *   this function sets the value of addr (useState) from default to '/answ/'
+   *   and then calls  getQues()
+   *   Need: when we want to sort the questions based on number of answers then we click on the answer button 
+   *         this function is then called 
+   */
+
+  function setanswerAddress() {
+    console.log("hii")
+    setAddr('/answ')
+    console.log(addr);
+    getQues();
+  }
+
+  /**
+   * getQues : function
+   *   in this function we first make a http get method request to the server using axios
+   *   based on the url it then returns the question (either sorted based on the upper 3 parameters) or 
+   *   normally in the same way as stored in the database
+   */
+  async function getQues() {
+    console.log("running")
+    console.log("hii addrss")
+    console.log("http://localhost:9000/ques", addr)
+    const questions = await axios.get("http://localhost:9000/ques" + addr);
+
+    // here we set the questions using react hook 
+    setQues(questions.data);
+  }
+
+  /**
+   * useEffect is React LifeCycle method which is called when the page get mount 
+   * we need this effect to call getQues and to set the ques(useState (React Hook)) variable with all the questions
+   * we get from the axios
+   */
+  useEffect(() => {
+    getQues();
+  }, []);
+
+  /**
+   * In this useEffect we implemented a function getTags
+   * getTags : function 
+   *     in this function we make a http post method call to the server using axios library
+   *     in post method we pass 2 parameters 1) url 2) body
+   *     
+   *     Server in response gives a json object which contains all the tags which are used with atleast one of the 
+   *     questions 
+   *     Then we set the allTags array values with the data we get in the response from the server using react hook
+   * Here async means asyncronous call 
+   * and await means wait until we get the response , once we get the response then only execute the next line in 
+   * sequence
+   */
+  useEffect(() => {
+    async function getTags() {
+      try{
+
+        //body : a variable which we sends in the post method
+        const body={
+          mnl:"mnl"
+        }
+        // response : object which contain the response we get from the server
+        const response= await axios.post("http://localhost:9000/ques/tagsSection",body)
+
+        //alltags : object which contains key value pair of tag and its count 
+        const alltags=response.data;
+
+        // here we set the alltags value using setTags React Hook method
+        setTags(alltags)
+      }
+      catch(err){
+        console.log(err)
+      }
+    }
+    getTags();
+  }, []);
+
+  /**
+   * rendertags : function
+   * @returns html span inline blocks of tags which we are displaying on homepage
+   */
+  function rendertags(){
+
+    //object.enetries is the function which is used to iterate through the tags object which is a key-value pair
+    return Object.entries(tags).map(([key,value])=>{
+      return (
+        &lt;span className="text-color tags-box">
+          {key}-{value}
+        &lt;/span>
+      )
+    })
+  }
+
+  return (
+    &lt;div class="container-fluid s">
+
+      
+      &lt;div className="row ml-5 mt-4 no-gutters">
+
+        &lt;span>&lt;button onClick={setviewAddress}>
+            Views
+          &lt;/button> &lt;/span>
+        &lt;span>&lt;button onClick={setvoteAddress}>
+            Votes
+          &lt;/button> &lt;/span>
+        &lt;span>&lt;button  onClick={setanswerAddress}>
+            Answers
+          &lt;/button>&lt;/span>
+        
+      &lt;/div>
+
+
+
+      &lt;div class="row row-body">
+        &lt;div className="col-8 col-sm disp">
+          &lt;Homepage ques={ques} />
+        &lt;/div>
+        &lt;div className="col-4 rendertags"> 
+          &lt;h4 className="text-color">All Tags&lt;/h4>
+          {rendertags()}
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+}
+
+export default Ques;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Client</a></h2><h3>Modules</h3><ul><li><a href="global.html#Answer">Answer</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Authenticatorforfrontend">Authenticator for front end</a></li><li><a href="global.html#DispAnswer">DispAnswer</a></li><li><a href="global.html#ErrorMessage">ErrorMessage</a></li><li><a href="global.html#fetchQuestion">fetchQuestion</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#HomepageList">Homepage List</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NavigationBar">Navigation Bar</a></li><li><a href="global.html#OnLike">OnLike</a></li><li><a href="global.html#OnVote">OnVote</a></li><li><a href="global.html#PostQuestion">Post Question</a></li><li><a href="global.html#QuestionPage">QuestionPage</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#renderAns">renderAns</a></li><li><a href="global.html#rendertags">rendertags</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Oct 25 2021 19:48:37 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

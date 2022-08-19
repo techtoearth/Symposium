@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Components/Register/register.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Components/Register/register.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import axios from "axios";
+import React, { useContext, useState } from "react";
+import ErrorMessage from "../ErrorMessage/errormess"
+import { useHistory } from "react-router-dom";
+import AuthContext from "../../context/AuthContext";
+import './styles.css';
+import { Link } from 'react-router-dom';
+
+/**
+ * Register page
+ * @function Register
+ * @name Register
+ * @returns {*} html page for register
+ */
+function Register() {
+  // email: String. Stores email entered by user
+  const [email, setEmail] = useState("");
+  // name: String. Stores name entered by user
+  const [name, setName] = useState("");
+  // password: String. Stores password entered by user
+  const [password, setPassword] = useState("");
+  // passwordVerify: String. Stores passwordVerify entered by user
+  const [passwordVerify, setPasswordVerify] = useState("");
+  // err: Dictionary. Stores error response from backend
+  const [err,seterr]=useState({})
+  // errorMessage: String. Stores error message
+  const [errorMessage, setErrorMessage] = useState("")
+  const { getLoggedIn } = useContext(AuthContext);
+  const history = useHistory();
+  
+  /**
+   * Validate entries and send to the backend
+   * @param {*} e 
+   * @returns{void}
+   */
+  async function register(e) {
+    e.preventDefault();
+    // isValidated: Boolean. Flag variable
+    var isValidated=true
+    let error={};
+    // name entered shoud be of atleast one character
+    if(name.length &lt;1){
+      isValidated=false;
+      error["name"]="Field user name cannot be empty";
+    }
+    // email should match with proper email syntax
+    if(!email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)){
+      isValidated=false;
+      error["email"]="Email is invalid";
+    }
+    // Checking if password length is strong enough
+    if(password.length &lt;6){
+      isValidated=false;
+      error["password"]="Password length is too short";
+    }
+    // Verifying paasword with passwordVerify
+    if( password  !== passwordVerify){
+      isValidated=false;
+      error["passwordverify"]="Password and confirm password do not match";
+    }
+    // If all entries are valid
+    if(isValidated){
+      let error={}
+      seterr(error)
+      try {
+        // registerData: Dictionary {{String, String, String}}
+        const registerData = {
+          email,
+          password,
+          name,
+        };
+        // Send register details 
+        await axios.post("http://localhost:9000/auth/", registerData);
+  
+        await getLoggedIn();
+        history.push("/login");
+      } catch (err) {
+        if (err.response) {
+          if (err.response.data.errorMessage) {
+            setErrorMessage(err.response.data.errorMessage);
+          }
+        }
+      }
+    }
+    else{
+      seterr(error)
+    }
+  }
+  // return html component for register
+  return (
+    // post error message found in validations done above
+    &lt;div className="container">
+      {errorMessage &amp;&amp; (
+        &lt;ErrorMessage
+          message={errorMessage}
+          clear={() => setErrorMessage(null)}
+        />
+      )}
+        &lt;div className="row row-container">
+          &lt;div className="col-3">&lt;/div>
+          &lt;div className="col-5 section">
+            &lt;form className="demoForm" onSubmit={register}>
+              &lt;h2>Sign up&lt;/h2>
+              &lt;div className="form-group">
+                &lt;label>Full Name&lt;/label>
+                &lt;input type="text" className="form-control"
+                  placeholder="Enter your user name"
+                  name="name"
+                  onChange={(e) => setName(e.target.value)}
+                  value={name} />
+                   &lt;p className="errors">{err["name"]}&lt;/p>
+              &lt;/div>
+              &lt;div className="form-group">
+                &lt;label htmlFor="email">Email address&lt;/label>
+                &lt;input type="email" required className="form-control" name="email"
+                  placeholder="Email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email} />
+                   &lt;p className="errors">{err["email"]}&lt;/p>
+              &lt;/div>
+              &lt;div className="form-group" >
+                &lt;label htmlFor="password">Password&lt;/label>
+                &lt;input type="password" className="form-control" name="password"
+                  placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password} />
+                   &lt;p className="errors">{err["password"]}&lt;/p>
+              &lt;/div>
+              &lt;div className="form-group" >
+                &lt;label htmlFor="repassword">Confirm Password&lt;/label>
+                &lt;input type="password" className="form-control" name="repassword"
+                  placeholder="Confirm Password"
+                  onChange={(e) => setPasswordVerify(e.target.value)}
+                  value={passwordVerify} />
+                   &lt;p className="errors">{err["passwordverify"]}&lt;/p>
+              &lt;/div>
+              &lt;button type="submit" className="btn btn-dark btn-lg btn-block">Sign up&lt;/button>
+            &lt;/form>
+            &lt;p className="text-right">
+              &lt;Link className="link" to="/login">Login&lt;/Link>
+            &lt;/p>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+  );
+}
+
+export default Register;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Client</a></h2><h3>Modules</h3><ul><li><a href="global.html#Answer">Answer</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Authenticatorforfrontend">Authenticator for front end</a></li><li><a href="global.html#DispAnswer">DispAnswer</a></li><li><a href="global.html#ErrorMessage">ErrorMessage</a></li><li><a href="global.html#fetchQuestion">fetchQuestion</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#HomepageList">Homepage List</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NavigationBar">Navigation Bar</a></li><li><a href="global.html#OnLike">OnLike</a></li><li><a href="global.html#OnVote">OnVote</a></li><li><a href="global.html#PostQuestion">Post Question</a></li><li><a href="global.html#QuestionPage">QuestionPage</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#renderAns">renderAns</a></li><li><a href="global.html#rendertags">rendertags</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Oct 25 2021 19:48:37 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

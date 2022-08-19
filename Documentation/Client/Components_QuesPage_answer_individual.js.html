@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Components/QuesPage/answer_individual.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Components/QuesPage/answer_individual.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import axios from "axios";
+import React, { useContext, useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import AuthContext from "../../context/AuthContext";
+import DispAnswer from './dispanswer';
+import Homepagelist from '../Homepage/homepagelist'
+import "../PostQuestion/tagsInput.css"
+
+
+/**
+ * Posting answer for a Question
+ * @name Post Answer
+ * @function Answer
+ * @param {ObjectSchema} question - Question for which to Post Answer 
+ * @returns {html} - Html component with post answer text area and on click updates database and rendered fresh data
+ */
+
+function Answer({ question }) {
+  // body: String. stores answer body from text area. Default value empty string
+  const [body, setBody] = useState("");
+  // err: String. stores error message. When non IITB student tries to post answer, It displays non authorised message.
+  const [err, seterr] = useState("")
+  const { getLoggedIn } = useContext(AuthContext);
+  // create useHistory for keeping track of history of webpages visited
+  const history = useHistory();
+  
+/**
+ * fetches details from param question and call the router function from backend and then render fresh data
+ * @returns {void}
+ */
+
+  function RenderQues() {
+    // Posting answer from back end router
+    async function postAns(e) {
+      e.preventDefault();
+      try {
+        // paramters required to send to backend routing function
+        const ansBody = {
+          body,
+          Quesid: question._id,
+          author: question.author,
+          email: question.email,
+        };
+
+        // backend routing function invoked and rendered data fresh
+        await axios.post("http://localhost:9000/ques/postAns", ansBody);
+        console.log("req accepted")
+        await getLoggedIn();
+        window.location.reload();
+        history.push("/ques/" + question._id);
+
+      } catch (err) {
+        // If non IITB member tries to post answer, verification fails for him/her and gets non authorised message
+        if (err.response) {
+          if (err.response.data.errorMessage) {
+            seterr(err.response.data.errorMessage);
+          }
+        }
+      }
+    }
+
+    // Returns html component for post answer feature
+    return (
+      &lt;div>
+        &lt;div>
+
+          &lt;h3>&lt;span className="text-color">Post Your Answer&lt;/span>&lt;/h3>
+          &lt;form onSubmit={postAns}>
+            &lt;div className="form-group ">
+
+              &lt;textarea
+                className="form-control textarea"
+                name="message"
+                rows="5"
+                cols="20"
+                onChange={(e) => setBody(e.target.value)}
+                value={body}
+              >&lt;/textarea>
+              &lt;p className="error">{err}&lt;/p>
+            &lt;/div>
+
+            &lt;button type="submit" >Post&lt;/button>
+
+            );
+          &lt;/form>
+
+        &lt;/div>
+
+      &lt;/div>
+    );
+
+  }
+  return (
+    &lt;>
+      {RenderQues()}
+    &lt;/>
+  );
+
+}
+
+// Exporting the Answer
+export default Answer;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Client</a></h2><h3>Modules</h3><ul><li><a href="global.html#Answer">Answer</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Authenticatorforfrontend">Authenticator for front end</a></li><li><a href="global.html#DispAnswer">DispAnswer</a></li><li><a href="global.html#ErrorMessage">ErrorMessage</a></li><li><a href="global.html#fetchQuestion">fetchQuestion</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#HomepageList">Homepage List</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NavigationBar">Navigation Bar</a></li><li><a href="global.html#OnLike">OnLike</a></li><li><a href="global.html#OnVote">OnVote</a></li><li><a href="global.html#PostQuestion">Post Question</a></li><li><a href="global.html#QuestionPage">QuestionPage</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#renderAns">renderAns</a></li><li><a href="global.html#rendertags">rendertags</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Oct 25 2021 19:48:37 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

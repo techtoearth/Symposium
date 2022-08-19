@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Components/Homepage/homepage.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Components/Homepage/homepage.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useContext ,useState } from "react";
+import { Link } from 'react-router-dom';
+import './homepage.css'
+import AuthContext from "../../context/AuthContext";
+
+
+/**
+ * functional component which is used to render 
+          *1)search functionality
+          *2)render all the posted questions
+          *3)render all the tags which are attached with the questions
+        
+ * @name Homepage
+* @function HomePage
+  * @param {Object} ques - Contains all the questions
+ * @returns {html} - Returns Html pags
+ */
+
+function HomePage({ ques }) {
+
+  //ques_forever : temp variable containing all the  questions
+  const ques_forever=ques
+  function getUniqueAfterMerge(arr1, arr2){
+
+    // merge two arrays
+    let arr = arr1.concat(arr2);
+
+    //contains the unique values
+    let uniqueArr = [];
+
+    // loop through array and remove the duplicate questions
+    for(let i of arr) {
+        if(uniqueArr.indexOf(i) === -1) {
+            uniqueArr.push(i);
+        }
+      }
+
+    //returns the unique array of questions after removing duplicates
+    return uniqueArr;
+      }
+
+
+  const data = useContext(AuthContext);
+
+  //search : string variable which holds the value we have written in search input
+  const [search, setSearch] = useState("");
+
+  //ques1 : temprory array variable used to store the questions
+  let ques1=[]
+
+  //logging to check the values , whether our method is working or not
+  console.log("searching.......",search)
+  console.log(data)
+
+  // here we are checking the type of ques by logging it to consoleconsole.log("type of :",typeof ques)
+ /* searching logic */
+ if(search.length > 0 ){
+
+  //searchInp : an array , which we get after splitting our search value based on whitespace
+  let searchInp=search.split(" ")
+
+  //ques2 : temprory array variable used to store the questions
+  let ques2=[]
+
+  //here we are looping through the array we got after splitting our search value
+  /**
+   * logic: first we are converting each searched word into its lowercase
+   *        then if it is not whitespace
+   *        we will filter our ques_forever array of questions based on two conditions
+   *        1) either any question contain that searched word 
+   *        2) or tags of that questions contains the searched word
+   */
+  for(let s=0;s&lt;searchInp.length;s++){
+      
+      // converting each searched word into its lowercase
+      let input=searchInp[s].toLowerCase()
+
+      //checking whether input is not a whitespace character
+      if(input !== ""){
+
+        /**
+         * ques2 : a filtered array of questions 
+         *          which either contains searched word in its title or in tis tags
+         */
+    ques2=(ques_forever.filter(que=>{
+      return que.body.toLowerCase().includes(input.toLowerCase()) ||  (que.tags.filter((str) => str.toLowerCase().includes(input.toLowerCase())).length>0)
+    }))
+    }
+
+    /**calling getUniqueAfterMerge function to merge ques1 and ques2 */
+    ques1=getUniqueAfterMerge(ques1,ques2)
+    
+    //assigning merged and unique values (ques1) to ques which is our main array using which we are 
+    //rendering the questions on the homepage
+    ques=ques1
+    console.log(ques1)
+  }
+  
+}
+   /**loggedIn : boolean variable
+    * true : if user is logged in
+    * false : if user is not logged in
+    */
+  const loggedIn = data.loggedIn
+  
+  /**
+   * seachTo : object
+   * contains key value pairs
+   * 1) Key : pathname , value : url
+   * 2) Key : search , value : search (containing all the related questions filtered based on our search string)
+   */
+  const searchTo = { 
+    pathname: "/search", 
+    search: search 
+  };
+
+  /**
+   * 
+   * @param {object} tags 
+   * @returns {*} html div component
+   */
+  function rendertags(tags) {
+    return (
+      &lt;>
+       {/**
+        * here we are using map function to iterate over tags array and render all the tags using span html tag   
+        */ }
+        {tags.map(function (tag, i) {
+          return (&lt;span key={i} className="text-color tags tag-box">{tag}&lt;/span>)
+        })}
+      &lt;/>
+    )
+  }
+
+
+  /**
+   * 
+   * @returns  html div component in which there are several rows
+   *           where in each row we are displaying title of the question, author of the question, 
+   *           tags related to it , time when it was asked , its likes , views and count of total answers
+   */
+  function renderQues() {
+
+
+    /**
+     * here we are mapping question array , extracting each question and displaying it in the appropriate format in html 
+     */
+    return ques.map((qp, i) => {
+      return (
+        &lt;div className="row questions question-row">
+          &lt;div className="col-8">
+            &lt;div className="row row-color ml-1">
+              {/**  loggedIn boolean variable which is used to check whether user is logged in or not
+               *    if yes then on clicking the question , a seperate page will get displayed for that particular page and all the related 
+               *    answers will be displayed 
+              */}
+              {loggedIn === true &amp;&amp; (
+                &lt;>
+                  &lt;p key={i} className="title">&lt;Link to={"/ques/" + qp._id} className="link"> {qp.body}&lt;/Link>&lt;/p>
+                &lt;/>)
+              }
+              {loggedIn === undefined &amp;&amp; (
+                &lt;>
+                  &lt;p key={i} >&lt;Link to={"/login"} className="link"> {qp.body}&lt;/Link>&lt;/p>
+                &lt;/>)
+              }
+            &lt;/div>
+            &lt;div className="row">
+              &lt;div className="col-5 author">
+                &lt;p className="postby">  &lt;span>{qp.author}&lt;/span> &lt;span> &amp;nbsp;  &lt;/span> &lt;span>{qp.created_at}&lt;/span>&lt;/p>
+              &lt;/div>
+              &lt;div className="col-7">
+                {/* here we are calling rendertags function to render an array of tags */}
+                {rendertags(qp.tags)}
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+          &lt;div className="col-4">
+            &lt;div className="row">
+              &lt;div className="col-3 mt-3 mr-1 questions box s">
+                &lt;span className="text-color">{qp.viewsCount}&lt;/span>&lt;br />
+                &lt;span className="text-color">Views&lt;/span>
+              &lt;/div>
+              &lt;div className="col-3 mt-3 mr-1 questions box s">
+                &lt;span className="text-color">{qp.count_answers}&lt;/span>&lt;br />
+                &lt;p className="text-color">answers&lt;/p>
+              &lt;/div>
+              &lt;div className="col-3 mt-3  questions box s">
+                &lt;span className="text-color">{qp.upVoteCount}&lt;/span>&lt;br />
+                &lt;span className="text-color">votes&lt;/span>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      );
+    });
+    // console.log(ques)
+  }
+  return (
+    &lt;div>
+      &lt;div class="row input-group mb-3">
+        &lt;div class="input-group-append mb-3">
+          &lt;input type="text" class="form-control" 
+            placeholder="Search by Tags" 
+            aria-label="Recipient's username" 
+            aria-describedby="basic-addon2"
+            onChange={(e) => setSearch(e.target.value)} />
+          &lt;button class="btn btn-outline-secondary" type="button" >&lt;span>
+            &lt;Link className="link" to={searchTo}  >&lt;i class="fas fa-search">&lt;/i>&lt;/Link>
+          &lt;/span>&lt;/button>
+        &lt;/div>
+      &lt;/div>
+      {/* here we are calling renderQues function */}
+      {renderQues()}
+    &lt;/div>
+  );
+}
+
+export default HomePage;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Client</a></h2><h3>Modules</h3><ul><li><a href="global.html#Answer">Answer</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Authenticatorforfrontend">Authenticator for front end</a></li><li><a href="global.html#DispAnswer">DispAnswer</a></li><li><a href="global.html#ErrorMessage">ErrorMessage</a></li><li><a href="global.html#fetchQuestion">fetchQuestion</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#HomepageList">Homepage List</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NavigationBar">Navigation Bar</a></li><li><a href="global.html#OnLike">OnLike</a></li><li><a href="global.html#OnVote">OnVote</a></li><li><a href="global.html#PostQuestion">Post Question</a></li><li><a href="global.html#QuestionPage">QuestionPage</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#renderAns">renderAns</a></li><li><a href="global.html#rendertags">rendertags</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Oct 25 2021 19:48:37 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
